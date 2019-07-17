@@ -22,7 +22,7 @@ router.post('/tasks', auth, async (req, res) => {
 //GET /tasks?limit=2
 //GET /tasks?skip=2 
 //GET /tasks?sortBy=-1
-router.get('/tasks', auth, async (req, res) => {
+router.get('/tasks/me',auth,  async (req, res) => {
     if(req.query.completed === 'true'){
         try{
             const tasks = await Task.find({
@@ -62,6 +62,62 @@ router.get('/tasks', auth, async (req, res) => {
             const tasks = await Task.find({
                 owner: req.user._id
             },null, {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort: {
+                    createdAt: -1
+                }
+            })
+            res.status(201).send(tasks)
+        }
+        catch(error){
+            res.status(500).send(error)
+        }
+    }
+
+    
+})
+
+//GET /tasks?completed=true
+//GET /tasks?limit=2
+//GET /tasks?skip=2 
+//GET /tasks?sortBy=-1
+router.get('/tasks', async (req, res) => {
+    if(req.query.completed === 'true'){
+        try{
+            const tasks = await Task.find({
+                completed: req.query.completed
+            },null, {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort: {
+                    createdAt: -1
+                }
+            })
+            res.status(201).send(tasks)
+        }
+        catch(error){
+            res.status(500).send(error)
+        }
+    }else if(req.query.completed === 'false'){
+        try{
+            const tasks = await Task.find({
+                completed: req.query.completed
+            },null, {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort: {
+                    createdAt: -1
+                }
+            })
+            res.status(201).send(tasks)
+        }
+        catch(error){
+            res.status(500).send(error)
+        }
+    }else{
+        try{
+            const tasks = await Task.find({},null, {
                 limit: parseInt(req.query.limit),
                 skip: parseInt(req.query.skip),
                 sort: {
